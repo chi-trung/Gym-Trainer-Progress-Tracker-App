@@ -85,7 +85,7 @@ fun AppNavHost() {
             composable(NavRoutes.ForgotPw) {
                 ForgotPasswordScreen(
                     onBackToLogin = { navController.navigate(NavRoutes.Login) },
-                    onSuccessReset = {
+                    onGoToResetPassword = {
                         navController.navigate(NavRoutes.Login) {
                             popUpTo(NavRoutes.Login) { inclusive = true }
                         }
