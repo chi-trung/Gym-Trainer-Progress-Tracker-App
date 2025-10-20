@@ -1,4 +1,4 @@
-package com.example.nutrifit.ui.screens.register
+package com.example.nutrifit.ui.screens.login
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -8,12 +8,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ripple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -50,34 +49,30 @@ import kotlinx.coroutines.launch
 
 // Định nghĩa các màu sắc
 private val NutriColor = Color(0xFF1AC9AC)
-private val BackgroundColor = Color(0xFFF5F5F5)
 private val CornerRadius = 16.dp
 private val GoogleButtonColor = Color(0xFF4285F4) // Màu Google blue
 private val FacebookButtonColor = Color(0xFF1877F2) // Màu Facebook blue
 
 @Composable
-fun RegisterScreen(
-    onRegister: () -> Unit,
-    onBackToLogin: () -> Unit
+fun LoginScreen2(
+    onLogin: () -> Unit,
+    onGoRegister: () -> Unit,
+    onForgotPw: () -> Unit
 ) {
-    var phoneNumber by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var otpCode by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         // Background image
         Image(
             painter = painterResource(id = R.drawable.loginbackground),
             contentDescription = "Background",
             modifier = Modifier.fillMaxSize(),
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            contentScale = ContentScale.Crop
         )
 
         // White box content - NẰM Ở GIỮA MÀN HÌNH với opacity 90%
@@ -86,7 +81,7 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .wrapContentHeight() // ĐỔI VỀ WRAP CONTENT HEIGHT
                 .align(Alignment.Center)
-                .padding(horizontal = 20.dp) // THÊM KHOẢNG CÁCH TRÁI PHẢI
+                .padding(horizontal = 20.dp) // KHOẢNG CÁCH TRÁI PHẢI
         ) {
             // White box với opacity 90%
             Box(
@@ -95,48 +90,42 @@ fun RegisterScreen(
                     .wrapContentHeight() // ĐỔI VỀ WRAP CONTENT HEIGHT
                     .clip(RoundedCornerShape(CornerRadius))
                     .background(Color.White.copy(alpha = 0.9f)) // OPACITY 90%
-                    .padding(16.dp) // TĂNG PADDING TRONG ĐỂ CÂN ĐỐI HỚN
+                    .padding(16.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(horizontal = 8.dp), // GIẢM PADDING VÌ ĐÃ CÓ PADDING Ở BOX NGOÀI
+                        .padding(horizontal = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Header với nút back và chữ Đăng nhập
-                    HeaderSection(onBackToLogin = onBackToLogin)
+                    // Header với nút back và chữ Đăng ký
+                    HeaderSection2(onGoRegister = onGoRegister)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Logo và tiêu đề
-                    LogoSection()
+                    LogoSection2()
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Form đăng ký
-                    RegisterForm(
-                        phoneNumber = phoneNumber,
-                        onPhoneNumberChange = { phoneNumber = it },
+                    // Form đăng nhập
+                    LoginForm2(
                         email = email,
                         onEmailChange = { email = it },
                         password = password,
                         onPasswordChange = { password = it },
-                        confirmPassword = confirmPassword,
-                        onConfirmPasswordChange = { confirmPassword = it },
-                        otpCode = otpCode,
-                        onOtpCodeChange = { otpCode = it },
                         rememberMe = rememberMe,
                         onRememberMeChange = { rememberMe = it },
                         focusManager = focusManager,
-                        onRegister = onRegister,
-                        onSendOtp = { /* Xử lý gửi OTP */ }
+                        onLogin = onLogin,
+                        onForgotPw = onForgotPw
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Đăng nhập với mạng xã hội - DẠNG COLUMN
-                    SocialLoginSection()
+                    // Đăng nhập với mạng xã hội
+                    SocialLoginSection2()
                 }
             }
         }
@@ -144,10 +133,9 @@ fun RegisterScreen(
 }
 
 @Composable
-fun HeaderSection(onBackToLogin: () -> Unit) {
+fun HeaderSection2(onGoRegister: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Nút back với animation
@@ -171,20 +159,21 @@ fun HeaderSection(onBackToLogin: () -> Unit) {
                         radius = 20.dp,
                         color = Color.Gray
                     )
+
                 ) {
                     isBackPressed = true
-                    onBackToLogin()
+                    onGoRegister()
                     // Reset animation
-                    GlobalScope.launch {
-                        delay(100)
+                    kotlinx.coroutines.GlobalScope.launch {
+                        kotlinx.coroutines.delay(100)
                         isBackPressed = false
                     }
                 },
-            tint = Color.Black // Màu đen
+            tint = Color.Black
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "Đăng nhập",
+            text = "Đăng ký",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = Color.Black
@@ -193,7 +182,7 @@ fun HeaderSection(onBackToLogin: () -> Unit) {
 }
 
 @Composable
-fun LogoSection() {
+fun LogoSection2() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -232,40 +221,28 @@ fun LogoSection() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Đăng ký để bắt đầu hành trình tập luyện",
+            text = "Đăng nhập để truy cập chương trình cá nhân hóa cho bạn.",
             textAlign = TextAlign.Center,
             fontSize = 14.sp,
             color = Color.Gray,
             lineHeight = 18.sp
         )
 
-        Text(
-            text = "và ăn uống khoa học",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            color = Color.Gray,
-            lineHeight = 18.sp
-        )
+
     }
 }
 
 @Composable
-fun RegisterForm(
-    phoneNumber: String,
-    onPhoneNumberChange: (String) -> Unit,
+fun LoginForm2(
     email: String,
     onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
-    confirmPassword: String,
-    onConfirmPasswordChange: (String) -> Unit,
-    otpCode: String,
-    onOtpCodeChange: (String) -> Unit,
     rememberMe: Boolean,
     onRememberMeChange: (Boolean) -> Unit,
     focusManager: FocusManager,
-    onRegister: () -> Unit,
-    onSendOtp: () -> Unit
+    onLogin: () -> Unit,
+    onForgotPw: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -279,56 +256,13 @@ fun RegisterForm(
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
-        CustomTextField(
+        CustomTextField2(
             value = email,
             onValueChange = onEmailChange,
-            placeholder = "Nhập email",
+            placeholder = "Nhập Email",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             focusManager = focusManager
         )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Mã OTP
-        Text(
-            text = "Mã OTP",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            CustomTextField(
-                value = otpCode,
-                onValueChange = onOtpCodeChange,
-                placeholder = "Nhập mã OTP",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                focusManager = focusManager,
-                modifier = Modifier.weight(1f)
-            )
-
-            Button(
-                onClick = onSendOtp,
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(44.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = NutriColor
-                )
-            ) {
-                Text(
-                    text = "Gửi",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
-            }
-        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -341,66 +275,99 @@ fun RegisterForm(
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
-        PasswordTextField(
+        PasswordTextField2(
             value = password,
             onValueChange = onPasswordChange,
-            placeholder = "Nhập mật khẩu",
+            placeholder = "••••••••••••••••••••",
             focusManager = focusManager
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Xác nhận mật khẩu
-        Text(
-            text = "Xác nhận mật khẩu",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-
-        PasswordTextField(
-            value = confirmPassword,
-            onValueChange = onConfirmPasswordChange,
-            placeholder = "Nhập lại mật khẩu",
-            focusManager = focusManager
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Remember me
+        // Remember me và Quên mật khẩu
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Checkbox(
-                checked = rememberMe,
-                onCheckedChange = onRememberMeChange,
-                modifier = Modifier.size(18.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = rememberMe,
+                    onCheckedChange = onRememberMeChange,
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(
+                    text = "Lưu mật khẩu",
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+
+            // Quên mật khẩu với animation
+            var isPressed by remember { mutableStateOf(false) }
+            val scale by animateFloatAsState(
+                targetValue = if (isPressed) 0.95f else 1f,
+                animationSpec = tween(100),
+                label = "forgot_password_scale"
             )
+
             Text(
-                text = "Lưu mật khẩu",
+                text = "Quên mật khẩu?",
                 fontSize = 14.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(start = 8.dp)
+                color = NutriColor,
+                modifier = Modifier
+                    .scale(scale)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(
+                            bounded = false,
+                            radius = 24.dp,
+                            color = NutriColor
+                        )
+                    ) {
+                        onForgotPw()
+                    }
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Đăng ký button
+        // Đăng nhập button với animation
+        var isLoginPressed by remember { mutableStateOf(false) }
+        val loginScale by animateFloatAsState(
+            targetValue = if (isLoginPressed) 0.98f else 1f,
+            animationSpec = tween(100),
+            label = "login_button_scale"
+        )
+
         Button(
-            onClick = onRegister,
+            onClick = {
+                isLoginPressed = true
+                onLogin()
+                // Reset animation sau một chút
+                kotlinx.coroutines.GlobalScope.launch {
+                    kotlinx.coroutines.delay(100)
+                    isLoginPressed = false
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(48.dp)
+                .scale(loginScale),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = NutriColor
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 4.dp,
+                pressedElevation = 2.dp
             )
         ) {
             Text(
-                text = "Đăng ký",
+                text = "Đăng nhập",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -410,21 +377,19 @@ fun RegisterForm(
 }
 
 @Composable
-fun SocialLoginSection() {
+fun SocialLoginSection2() {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // ĐÃ XÓA DÒNG "Hoặc đăng nhập với"
-
-        SocialLoginButton(
+        SocialLoginButton2(
             icon = R.drawable.google,
             text = "Đăng nhập với Google",
             buttonColor = GoogleButtonColor,
             onClick = { /* Handle Google login */ }
         )
 
-        SocialLoginButton(
+        SocialLoginButton2(
             icon = R.drawable.facebook,
             text = "Đăng nhập với Facebook",
             buttonColor = FacebookButtonColor,
@@ -434,20 +399,40 @@ fun SocialLoginSection() {
 }
 
 @Composable
-fun SocialLoginButton(
+fun SocialLoginButton2(
     icon: Int,
     text: String,
     buttonColor: Color,
     onClick: () -> Unit
 ) {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.98f else 1f,
+        animationSpec = tween(100),
+        label = "social_button_scale"
+    )
+
     Button(
-        onClick = onClick,
+        onClick = {
+            isPressed = true
+            onClick()
+            // Reset animation sau một chút
+            kotlinx.coroutines.GlobalScope.launch {
+                kotlinx.coroutines.delay(100)
+                isPressed = false
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp),
+            .height(44.dp)
+            .scale(scale),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = buttonColor // MÀU FILL CHO NÚT
+            containerColor = buttonColor
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 3.dp,
+            pressedElevation = 1.dp
         )
     ) {
         Row(
@@ -464,14 +449,14 @@ fun SocialLoginButton(
                 text = text,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color.White // CHỮ MÀU TRẮNG
+                color = Color.White
             )
         }
     }
 }
 
 @Composable
-fun CustomTextField(
+fun CustomTextField2(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
@@ -484,7 +469,7 @@ fun CustomTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
-            .fillMaxWidth() // ĐẢM BẢO CHIẾU RỘNG ĐẦY ĐỦ TRONG KHÔNG GIAN CÓ SẴN
+            .fillMaxWidth()
             .height(44.dp)
             .clip(RoundedCornerShape(8.dp))
             .border(
@@ -492,7 +477,7 @@ fun CustomTextField(
                 color = Color.LightGray,
                 shape = RoundedCornerShape(8.dp)
             )
-            .background(Color.Transparent) // NO FILL - TRONG SUỐT
+            .background(Color.Transparent)
             .padding(horizontal = 12.dp),
         keyboardOptions = keyboardOptions,
         visualTransformation = visualTransformation,
@@ -518,7 +503,7 @@ fun CustomTextField(
 }
 
 @Composable
-fun PasswordTextField(
+fun PasswordTextField2(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
