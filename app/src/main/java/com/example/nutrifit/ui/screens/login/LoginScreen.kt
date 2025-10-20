@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,20 +26,24 @@ import com.example.nutrifit.R
 fun LoginScreen(
     onLogin: () -> Unit,
     onGoRegister: () -> Unit,
-    onForgotPw: () -> Unit
+    onForgotPw: () -> Unit,
+    onEmailLogin: () -> Unit = {} // THÊM PARAMETER CHO EMAIL LOGIN
 ) {
-    Box(Modifier.fillMaxSize()) {
-        // Background image + gradient overlay
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Background image - chiếm toàn bộ màn hình (kể cả dưới system bars)
         Image(
             painter = painterResource(R.drawable.loginbackground),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
+            modifier = Modifier.fillMaxSize()
         )
 
+        // Gradient overlay - cũng chiếm toàn bộ màn hình
         Box(
             modifier = Modifier
-                .matchParentSize()
+                .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -50,10 +55,12 @@ fun LoginScreen(
                 )
         )
 
-        // Toàn bộ nội dung được căn giữa màn hình
+        // Nội dung chính - chỉ áp dụng padding cho nội dung, không cho background
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -169,9 +176,9 @@ fun LoginScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // Nút Email (viền trắng)
+            // Nút Email (viền trắng) - CHUYỂN ĐẾN LOGINSCREEN2
             OutlinedButton(
-                onClick = onLogin,
+                onClick = onEmailLogin, // THAY ĐỔI TỪ onLogin THÀNH onEmailLogin
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier.fillMaxWidth(),
                 border = BorderStroke(2.dp, Color.White),
