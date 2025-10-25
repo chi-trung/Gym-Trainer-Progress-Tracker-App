@@ -249,8 +249,8 @@ fun OnboardingScreen(onStart: () -> Unit) {
                 },
                 colors = if (isLast) {
                     ButtonDefaults.buttonColors(
-                        containerColor = colorScheme.primaryContainer,
-                        contentColor = colorScheme.onPrimaryContainer
+                        containerColor = Color(0xFF3475B7),
+                        contentColor = Color.White
                     )
                 } else {
                     ButtonDefaults.buttonColors(
