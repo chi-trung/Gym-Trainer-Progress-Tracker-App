@@ -79,7 +79,7 @@ fun OnboardingScreen(onStart: () -> Unit) {
                         .fillMaxSize()
                         .padding(top = WindowInsets.statusBars.asPaddingValues()
                             .calculateTopPadding())
-                        .offset(y = (-90).dp),
+                        .offset(y = (-85).dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // --- Phần hình ảnh ---
