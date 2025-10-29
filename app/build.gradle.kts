@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.threetenabp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.compose.ui.test)
+    implementation(libs.coil.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
