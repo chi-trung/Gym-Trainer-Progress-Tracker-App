@@ -70,7 +70,7 @@ fun OnboardingScreen(onStart: () -> Unit) {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HorizontalPager(count = pages.size, state = pagerState, modifier = Modifier.weight(1f)) { page ->
+        HorizontalPager(count = pages.size, state = pagerState, modifier = Modifier.weight(1f),  userScrollEnabled = pagerState.currentPage != 0) { page ->
             val data = pages[page]
 
             if (page > 0) {

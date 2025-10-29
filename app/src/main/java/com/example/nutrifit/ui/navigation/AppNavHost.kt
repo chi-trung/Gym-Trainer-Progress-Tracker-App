@@ -20,9 +20,10 @@ import com.example.nutrifit.ui.screens.login.LoginScreen2
 import com.example.nutrifit.ui.screens.map.MapScreen
 import com.example.nutrifit.ui.screens.meal.MealScreen
 import com.example.nutrifit.ui.screens.onboarding.OnboardingScreen
-import com.example.nutrifit.ui.screens.profile.ProfileScreen
 import com.example.nutrifit.ui.screens.register.RegisterScreen
 import com.example.nutrifit.ui.screens.workout.WorkoutScreen
+import com.example.nutrifit.ui.screens.createprofile.CreateProfile
+import com.example.nutrifit.ui.screens.profile.ProfileScreen
 
 @Composable
 fun AppNavHost() {
@@ -67,6 +68,7 @@ fun AppNavHost() {
             startDestination = NavRoutes.Onboarding,
             modifier = if (showBottomBar) Modifier.padding(paddingValues) else Modifier
         ) {
+
             composable(NavRoutes.Onboarding) {
                 OnboardingScreen(onStart = {
                     navController.navigate(NavRoutes.Login) {
@@ -149,7 +151,9 @@ fun AppNavHost() {
             composable(NavRoutes.Meal) { MealScreen() }
             composable(NavRoutes.Workout) { WorkoutScreen() }
             composable(NavRoutes.Map) { MapScreen() }
+            composable(NavRoutes.CrProfile) { CreateProfile() }
             composable(NavRoutes.Profile) { ProfileScreen() }
+
         }
     }
 }

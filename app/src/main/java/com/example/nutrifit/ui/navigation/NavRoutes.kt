@@ -10,6 +10,8 @@ object NavRoutes {
     const val Map = "map"
     const val Profile = "profile"
 
+    const val CrProfile = "createprofile"
+
 
     const val Register = "register"
     const val ForgotPw = "forgotpw"
