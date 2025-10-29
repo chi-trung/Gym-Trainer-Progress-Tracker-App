@@ -243,13 +243,15 @@ fun CreateProfile() {
                                     fontWeight = FontWeight.Bold
                                 )
                             },       // nhãn trên TextField
-                            placeholder = { Text("Nhập họ tên") }, // placeholder bên trong
+                            placeholder = { Text("Nhập họ tên",
+                                color = Color.Gray
+                            ) }, // placeholder bên trong
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(70.dp)
                                 .padding(horizontal = 25.dp),
                             singleLine = true,
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
+                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp,color = Color.Black )
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
