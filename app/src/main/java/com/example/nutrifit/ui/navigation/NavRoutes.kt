@@ -11,7 +11,7 @@ object NavRoutes {
     const val Map = "map"
     const val Scan = "scan"
     const val Profile = "profile"
-
+const val CrProfile = "crprofile"
     const val Target = "target"
 
     const val Register = "register"

@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.nutrifit.ui.components.BottomNavBar
+import com.example.nutrifit.ui.screens.createprofile.CreateProfile
 import com.example.nutrifit.ui.screens.forgotpw.ForgotPasswordScreen
 import com.example.nutrifit.ui.screens.forgotpw.ForgotPasswordScreen2
 import com.example.nutrifit.ui.screens.home.HomeScreen
@@ -169,6 +170,7 @@ fun AppNavHost() {
 //            composable(NavRoutes.Mealdetail) { MealDetailScreen(navController) } // THÊM NAVCONTROLLER
             composable(NavRoutes.Workout) { WorkoutScreen() }
             composable(NavRoutes.Map) { MapScreen() }
+            composable(NavRoutes.CrProfile) { CreateProfile()}
         }
     }
 }
