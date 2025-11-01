@@ -66,7 +66,9 @@ fun AppNavHost() {
         NavHost(
             navController = navController,
             startDestination = NavRoutes.Onboarding,
-            modifier = if (showBottomBar) Modifier.padding(paddingValues) else Modifier
+            modifier = Modifier // bỏ hết padding của Scaffold
+
+            //modifier = if (showBottomBar) Modifier.padding(paddingValues) else Modifier
         ) {
             composable(NavRoutes.Onboarding) {
                 OnboardingScreen(onStart = {

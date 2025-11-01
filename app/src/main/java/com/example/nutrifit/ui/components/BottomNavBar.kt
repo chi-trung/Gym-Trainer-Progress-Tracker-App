@@ -12,9 +12,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,35 +22,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nutrifit.ui.navigation.NavRoutes
-import androidx.compose.foundation.layout.navigationBarsPadding
 
 sealed class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
     data object Home : BottomNavItem(NavRoutes.Home, "Trang chủ", Icons.Filled.Home)
     data object Meal : BottomNavItem(NavRoutes.Meal, "Thực đơn", Icons.Filled.Restaurant)
     data object Scan : BottomNavItem(NavRoutes.Scan, "Quét mã", Icons.Filled.QrCodeScanner)
     data object Workout : BottomNavItem(NavRoutes.Workout, "Bài tập", Icons.Filled.FitnessCenter)
-    data object Profile : BottomNavItem(NavRoutes.Profile, "Thông tin", Icons.Filled.Person)
+    data object Profile : BottomNavItem(NavRoutes.Profile, "Hồ sơ", Icons.Filled.Person)
 }
 
 @Composable
 fun BottomNavBar(currentRoute: String?, onNavigate: (String) -> Unit) {
-    val items = listOf(
-        BottomNavItem.Home,
-        BottomNavItem.Meal,
-        BottomNavItem.Scan,
-        BottomNavItem.Workout,
-        BottomNavItem.Profile
-    )
 
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 40.dp, vertical = 10.dp)
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .padding(horizontal = 40.dp, vertical = 10.dp),
         color = Color(0xFF101010),
-        shape = RoundedCornerShape(40),
-        shadowElevation = 8.dp
+        shape = RoundedCornerShape(40.dp),
+        shadowElevation = 10.dp
     ) {
+        val items = listOf(
+            BottomNavItem.Home,
+            BottomNavItem.Meal,
+            BottomNavItem.Scan,
+            BottomNavItem.Workout,
+            BottomNavItem.Profile
+        )
+
         Row(
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 8.dp)
@@ -64,11 +62,10 @@ fun BottomNavBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                 val isSelected = currentRoute == item.route
 
                 if (isSelected) {
-                    // Khi được chọn
                     Row(
                         modifier = Modifier
                             .height(46.dp)
-                            .background(Color(0xFF1E88E5), RoundedCornerShape(40))
+                            .background(Color(0xFF1E88E5), RoundedCornerShape(40.dp))
                             .padding(horizontal = 12.dp)
                             .clickable { onNavigate(item.route) },
                         verticalAlignment = Alignment.CenterVertically
@@ -88,7 +85,6 @@ fun BottomNavBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                         )
                     }
                 } else {
-                    // Khi KHÔNG được chọn (bao gồm cả nút Scan)
                     Box(
                         modifier = Modifier
                             .size(46.dp)

@@ -41,6 +41,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.nutrifit.R
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.statusBars
 
 data class Meal(
     val id: Int,
@@ -93,6 +96,8 @@ fun MealScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White) // Đổi background sang màu sáng
+            .padding(WindowInsets.statusBars.asPaddingValues())
+
     ) {
         // Header
         Text(
