@@ -12,7 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.nutrifit.ui.components.BottomNavBar
-import com.example.nutrifit.ui.screens.createprofile.CreateProfile
 import com.example.nutrifit.ui.screens.forgotpw.ForgotPasswordScreen
 import com.example.nutrifit.ui.screens.forgotpw.ForgotPasswordScreen2
 import com.example.nutrifit.ui.screens.home.HomeScreen
@@ -24,6 +23,7 @@ import com.example.nutrifit.ui.screens.onboarding.OnboardingScreen
 import com.example.nutrifit.ui.screens.profile.ProfileScreen
 import com.example.nutrifit.ui.screens.register.RegisterScreen
 import com.example.nutrifit.ui.screens.target.TargetScreen
+import com.example.nutrifit.ui.screens.schedule.ScheduleScreen
 import com.example.nutrifit.ui.screens.workout.WorkoutScreen
 
 @Composable
@@ -32,13 +32,13 @@ fun AppNavHost() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination: NavDestination? = backStackEntry?.destination
 
-    // Các route hiển thị BottomBar
+    // Các route hiển thị BottomBar (giữ nguyên nếu NavRoutes.* là String)
     val bottomBarRoutes = setOf(
         NavRoutes.Home,
         NavRoutes.Meal,
         NavRoutes.Workout,
         NavRoutes.Map,
-        NavRoutes.Profile
+        // NavRoutes.Profile
     )
     val showBottomBar = currentDestination?.route in bottomBarRoutes
 
@@ -50,6 +50,7 @@ fun AppNavHost() {
                     onNavigate = { route ->
                         if (route != currentDestination?.route) {
                             navController.navigate(route) {
+                                // popUpTo bằng route của startDestination nếu có, fallback về Home route
                                 val startRoute = navController.graph.findStartDestination().route ?: NavRoutes.Home
                                 popUpTo(startRoute) {
                                     saveState = true
@@ -65,10 +66,9 @@ fun AppNavHost() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
+            modifier = Modifier,
             startDestination = NavRoutes.Onboarding,
-            modifier = Modifier // bỏ hết padding của Scaffold
-
-            //modifier = if (showBottomBar) Modifier.padding(paddingValues) else Modifier
+            // modifier = if (showBottomBar) Modifier.padding(paddingValues) else Modifier
         ) {
             composable(NavRoutes.Onboarding) {
                 OnboardingScreen(onStart = {
@@ -87,7 +87,7 @@ fun AppNavHost() {
                     },
                     onGoRegister = { navController.navigate(NavRoutes.Register) },
                     onForgotPw = { navController.navigate(NavRoutes.ForgotPw) },
-                    onEmailLogin = { navController.navigate(NavRoutes.Login2) }
+                    onEmailLogin = { navController.navigate(NavRoutes.Login2) } // THÊM NAVIGATION ĐẾN LOGIN2
                 )
             }
 
@@ -111,6 +111,7 @@ fun AppNavHost() {
                         }
                     },
                     onBackToLogin = {
+                        // CHUYỂN VỀ LOGIN2 THAY VÌ LOGIN
                         navController.navigate(NavRoutes.Login2) {
                             popUpTo(NavRoutes.Login2) { inclusive = true }
                         }
@@ -146,15 +147,12 @@ fun AppNavHost() {
                 )
             }
 
-//            composable(NavRoutes.Profile) {
-//                ProfileScreen(
-//                    onNextClicked = {
-//                        navController.navigate(NavRoutes.Target) {
-//                            popUpTo(NavRoutes.Target) { inclusive = true }
-//                        }
-//                    }
-//                )
-//            }
+            composable(NavRoutes.Profile) {
+                ProfileScreen(
+
+                )
+            }
+
 
             composable(NavRoutes.Target) {
                 TargetScreen(
@@ -165,14 +163,11 @@ fun AppNavHost() {
                     }
                 )
             }
-
-            // Bottom tabs
+            // Bottom tabs - không có animation
             composable(NavRoutes.Home) { HomeScreen() }
-            composable(NavRoutes.Meal) { MealScreen(navController) } // THÊM NAVCONTROLLER
-//            composable(NavRoutes.Mealdetail) { MealDetailScreen(navController) } // THÊM NAVCONTROLLER
+            composable(NavRoutes.Meal) { MealScreen(navController) }
             composable(NavRoutes.Workout) { WorkoutScreen() }
             composable(NavRoutes.Map) { MapScreen() }
-            composable(NavRoutes.CrProfile) { CreateProfile()}
         }
     }
 }
