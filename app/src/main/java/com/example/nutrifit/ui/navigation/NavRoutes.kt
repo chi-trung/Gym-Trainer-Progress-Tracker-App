@@ -3,15 +3,14 @@ package com.example.nutrifit.ui.navigation
 object NavRoutes {
     const val Onboarding = "onboarding"
     const val Login = "login"
-    const val Login2 = "login2" // THÊM ROUTE CHO LOGINSCREEN2
+    const val Login2 = "login2"
     const val Home = "home"
     const val Meal = "meal"
-    const val Mealdetail = "mealdetail"
+    const val Scan = "scan"
     const val Workout = "workout"
     const val Map = "map"
-    const val Scan = "scan"
     const val Profile = "profile"
-const val CrProfile = "crprofile"
+
     const val Target = "target"
 
     const val Register = "register"
