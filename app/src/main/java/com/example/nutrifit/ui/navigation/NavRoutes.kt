@@ -10,6 +10,7 @@ object NavRoutes {
     const val Workout = "workout"
     const val Map = "map"
     const val Profile = "profile"
+    const val Schedule = "schedule"
 
     const val Target = "target"
 

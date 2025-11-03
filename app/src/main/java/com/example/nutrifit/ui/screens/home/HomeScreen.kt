@@ -57,10 +57,12 @@ import android.R.attr.onClick
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavController
+import com.example.nutrifit.ui.navigation.NavRoutes
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     // Hai biến state riêng biệt
@@ -213,7 +215,7 @@ fun HomeScreen() {
                                 }
                                 Spacer(modifier = Modifier.weight(1f))
                                 Button(
-                                    onClick = {},
+                                    onClick = { navController.navigate("schedule")},
                                     modifier = Modifier
                                         .height(50.dp)
                                         .padding(top = 10.dp),
