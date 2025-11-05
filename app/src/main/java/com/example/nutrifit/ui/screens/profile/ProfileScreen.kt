@@ -17,7 +17,6 @@ fun ProfileScreen() {
     ) {
         Text("Profile Screen",
             fontSize = 50.sp
-
         )
     }
 }

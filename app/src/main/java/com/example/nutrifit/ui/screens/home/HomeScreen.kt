@@ -279,7 +279,7 @@ fun HomeScreen(navController: NavController) {
                             Spacer(modifier = Modifier.height(6.dp))
 
                             val days = listOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
-                            val values = listOf(2.9f, 3.0f, 5.1f, 7.1f, 3.2f, 3.0f, 0f)
+                            val values = listOf(7.9f, 7.0f, 7.1f, 7.1f, 7.2f, 7.0f, 7f)
                             val targetValue = 3.0f
 
                             val maxValue = maxOf(values.maxOrNull() ?: 0f, targetValue)
@@ -609,171 +609,6 @@ fun HomeScreen(navController: NavController) {
                 }
             }
 
-            //sang trua chieu toi - SỬA THÀNH selectedMeal
-            item{
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    // Nút Sáng
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 6.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (selectedMeal == "Sáng") Color.Black else Color(0xFFEFF6F0))
-                            .clickable { selectedMeal = "Sáng" }
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Sáng",
-                            fontSize = 16.sp,
-                            color = if (selectedMeal == "Sáng") Color.White else Color.Gray
-                        )
-                    }
-
-                    // Nút Trưa
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 6.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (selectedMeal == "Trưa") Color.Black else Color(0xFFEFF6F0))
-                            .clickable { selectedMeal = "Trưa" }
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Trưa",
-                            fontSize = 16.sp,
-                            color = if (selectedMeal == "Trưa") Color.White else Color.Gray
-                        )
-                    }
-
-                    // Nút Chiều
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 6.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (selectedMeal == "Chiều") Color.Black else Color(0xFFEFF6F0))
-                            .clickable { selectedMeal = "Chiều" }
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Chiều",
-                            fontSize = 16.sp,
-                            color = if (selectedMeal == "Chiều") Color.White else Color.Gray
-                        )
-                    }
-
-                    // Nút Tối
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 6.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (selectedMeal == "Tối") Color.Black else Color(0xFFEFF6F0))
-                            .clickable { selectedMeal = "Tối" }
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Tối",
-                            fontSize = 16.sp,
-                            color = if (selectedMeal == "Tối") Color.White else Color.Gray
-                        )
-                    }
-                }
-            }
-
-            // tang co, tang can, giam can, giu dang - SỬA THÀNH selectedGoal
-            item{
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 40.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    // Nút Tăng cơ
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 4.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(if (selectedGoal == "Tăng cơ") Color.Black else Color(0xFFF2F6F3))
-                            .clickable { selectedGoal = "Tăng cơ" }
-                            .padding(vertical = 6.dp, horizontal = 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Tăng cơ",
-                            fontSize = 13.sp,
-                            color = if (selectedGoal == "Tăng cơ") Color.White else Color.Gray
-                        )
-                    }
-
-                    // Nút Tăng cân
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 2.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(if (selectedGoal == "Tăng cân") Color.Black else Color(0xFFF2F6F3))
-                            .clickable { selectedGoal = "Tăng cân" }
-                            .padding(vertical = 6.dp, horizontal = 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Tăng cân",
-                            fontSize = 13.sp,
-                            color = if (selectedGoal == "Tăng cân") Color.White else Color.Gray
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 2.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(if (selectedGoal == "Giảm cân") Color.Black else Color(0xFFF2F6F3))
-                            .clickable { selectedGoal = "Giảm cân" }
-                            .padding(vertical = 6.dp, horizontal = 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Giảm cân",
-                            fontSize = 13.sp,
-                            color = if (selectedGoal == "Giảm cân") Color.White else Color.Gray
-                        )
-                    }
-
-                    // Nút Giữ dáng
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 2.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(if (selectedGoal == "Giữ dáng") Color.Black else Color(0xFFF2F6F3))
-                            .clickable { selectedGoal = "Giữ dáng" }
-                            .padding(vertical = 6.dp, horizontal = 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Giữ dáng",
-                            fontSize = 13.sp,
-                            color = if (selectedGoal == "Giữ dáng") Color.White else Color.Gray
-                        )
-                    }
-                }
-            }
-
             // dieu kien hien thi cac bua an
             item {
                 // Điều kiện hiển thị (Sáng và Tăng cơ)
@@ -1089,34 +924,6 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-                // Có thể thêm các điều kiện khác ở đây
-                if (selectedMeal == "Trưa" && selectedGoal == "Tăng cơ") {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .background(Color.White, RoundedCornerShape(12.dp))
-                    ) {
-                        Text(
-                            text = "🍲 Thực đơn trưa cho Tăng cơ",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Text("• Cơm trắng: 2 bát", fontSize = 14.sp)
-                        Text("• Ức gà: 200g", fontSize = 14.sp)
-                        Text("• Rau xanh các loại", fontSize = 14.sp)
-                        Text("• Đậu phụ: 150g", fontSize = 14.sp)
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text("Tổng calorie: ~750 kcal",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF4CAF50))
-                    }
-                }
             }
 
             item{
