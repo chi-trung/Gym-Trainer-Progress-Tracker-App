@@ -25,6 +25,9 @@ import com.example.nutrifit.ui.screens.register.RegisterScreen
 import com.example.nutrifit.ui.screens.target.TargetScreen
 import com.example.nutrifit.ui.screens.schedule.ScheduleScreen
 import com.example.nutrifit.ui.screens.workout.WorkoutScreen
+import com.example.nutrifit.ui.screens.meal.MealDetailScreen
+import com.example.nutrifit.ui.screens.setting.SettingScreen
+
 
 @Composable
 fun AppNavHost() {
@@ -38,6 +41,7 @@ fun AppNavHost() {
         NavRoutes.Meal,
         NavRoutes.Workout,
         NavRoutes.Map,
+        NavRoutes.Setting,
         // NavRoutes.Profile
     )
     val showBottomBar = currentDestination?.route in bottomBarRoutes
@@ -66,9 +70,7 @@ fun AppNavHost() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            modifier = Modifier,
             startDestination = NavRoutes.Onboarding,
-            // modifier = if (showBottomBar) Modifier.padding(paddingValues) else Modifier
         ) {
             composable(NavRoutes.Onboarding) {
                 OnboardingScreen(onStart = {
@@ -149,13 +151,26 @@ fun AppNavHost() {
 
             composable(NavRoutes.Profile) {
                 ProfileScreen(
-
+                    onNextClicked = {
+                        navController.navigate(NavRoutes.Target)
+                    }
                 )
             }
 
+            composable(NavRoutes.Setting) {
+                SettingScreen(
+                    onBackClick = { navController.popBackStack() },
+                    onSaveChanges = { name, email, phone ->
+                    },
+                    navController = navController
+                )
+            }
 
             composable(NavRoutes.Target) {
                 TargetScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
                     onNextClicked = {
                         navController.navigate(NavRoutes.Home) {
                             popUpTo(NavRoutes.Profile) { inclusive = true }
@@ -165,12 +180,17 @@ fun AppNavHost() {
             }
             // Bottom tabs - không có animation
             composable(NavRoutes.Home ) { HomeScreen(navController) }
-
             composable(NavRoutes.Meal) { MealScreen(navController) }
             composable(NavRoutes.Workout) { WorkoutScreen() }
             composable(NavRoutes.Map) { MapScreen() }
-            composable(NavRoutes.Schedule) { ScheduleScreen()}
+            composable("mealdetail/{mealId}") { backStackEntry ->
+                val mealId = backStackEntry.arguments?.getString("mealId")?.toIntOrNull() ?: 0
+                MealDetailScreen(mealId = mealId, navController = navController)
+            }
 
+            composable(NavRoutes.Schedule) {
+                ScheduleScreen(onBackClick = { navController.popBackStack() })
+            }
         }
     }
 }
