@@ -53,7 +53,8 @@ data class DailySchedule(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleScreen() {
+fun ScheduleScreen(onBackClick: () -> Unit) {
+
     // Ngày hôm nay cố định
     val today = LocalDate.of(2025, 10, 2)
 
@@ -81,14 +82,77 @@ fun ScheduleScreen() {
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
-        // Nút quay lại trong hộp có màu nền
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
+
+            // --- PHẦN HEADER ---
+            item {
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    ScheduleHeader(
+                        today = today,
+                        selectedDate = selectedDate,
+                        onDateChanged = { newDate -> selectedDate = newDate },
+                        onWeekChanged = { direction ->
+                            selectedDate = if (direction > 0) {
+                                selectedDate.plusWeeks(1)
+                            } else {
+                                selectedDate.minusWeeks(1)
+                            }
+                        },
+                        weeklySchedules = weeklySchedules,
+                        dateFormatter = dateFormatter
+                    )
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            // --- PHẦN NỘI DUNG (THẺ BÀI TẬP) ---
+            item {
+                todaySchedule?.let {
+
+                    Column(Modifier.padding(horizontal = 16.dp)) {
+                        ScheduleDetailsCard(schedule = it)
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // --- PHẦN FOOTER ---
+            item {
+                todaySchedule?.let {
+                    Column(Modifier.padding(horizontal = 16.dp)) {
+                        DailyProgressFooter(schedule = it)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        WeeklyProgressFooter(weeklySchedules = weeklySchedules)
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
+        }
+
+        // 2. Đặt Nút Quay Lại ở trên cùng bên trái
         Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(16.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(Color.White)
-                .clickable { /* TODO: Navigate back */ }
+                .clickable { onBackClick() }
                 .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
             Row(
@@ -107,63 +171,6 @@ fun ScheduleScreen() {
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF4CAF50)
                 )
-            }
-        }
-
-        // Sử dụng LazyColumn thay vì Column
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(32.dp)) // Space cho nút back
-            }
-
-            // --- PHẦN HEADER ---
-            item {
-                ScheduleHeader(
-                    today = today,
-                    selectedDate = selectedDate,
-                    onDateChanged = { newDate -> selectedDate = newDate },
-                    onWeekChanged = { direction ->
-                        selectedDate = if (direction > 0) {
-                            selectedDate.plusWeeks(1)
-                        } else {
-                            selectedDate.minusWeeks(1)
-                        }
-                    },
-                    weeklySchedules = weeklySchedules,
-                    dateFormatter = dateFormatter
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            // --- PHẦN NỘI DUNG (THẺ BÀI TẬP) ---
-            item {
-                todaySchedule?.let {
-                    ScheduleDetailsCard(schedule = it)
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            // --- PHẦN FOOTER ---
-            item {
-                todaySchedule?.let {
-                    DailyProgressFooter(schedule = it)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    WeeklyProgressFooter(weeklySchedules = weeklySchedules)
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
@@ -288,7 +295,7 @@ fun ScheduleHeader(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Nút "Quay về hôm nay" (chỉ hiển thị khi không phải ngày hôm nay)
+        // Nút "Quay về hôm nay"
         if (selectedDate != today) {
             Button(
                 onClick = { onDateChanged(today) },
@@ -769,6 +776,6 @@ fun generateWeeklySchedules(startDate: LocalDate): List<DailySchedule> {
 @Composable
 fun ScheduleScreenPreview() {
     NutriFitTheme {
-        ScheduleScreen()
+        ScheduleScreen(onBackClick = {})
     }
 }
