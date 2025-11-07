@@ -1,5 +1,8 @@
 package com.example.nutrifit.ui.screens.login
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -12,16 +15,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ripple
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +33,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -42,23 +46,59 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nutrifit.R
-import kotlinx.coroutines.GlobalScope
+import com.example.nutrifit.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// Định nghĩa các màu sắc
 private val NutriColor = Color(0xFF1AC9AC)
 private val CornerRadius = 16.dp
-private val GoogleButtonColor = Color(0xFF4285F4) // Màu Google blue
-private val FacebookButtonColor = Color(0xFF1877F2) // Màu Facebook blue
+private val GoogleButtonColor = Color(0xFF4285F4)
+private val GitHubButtonColor = Color(0xFF24292E)
 
 @Composable
 fun LoginScreen2(
     onLogin: () -> Unit,
+    onFirstLogin: () -> Unit,
     onGoRegister: () -> Unit,
+    onGoBack: () -> Unit,
     onForgotPw: () -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = context as android.app.Activity
+    val viewModel: AuthViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        viewModel.initGoogleSignIn(context)
+    }
+
+    val googleLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            viewModel.handleGoogleSignInResult(result.data)
+        }
+    }
+
+    val authState by viewModel.authState.collectAsState()
+
+    LaunchedEffect(authState) {
+        when (val state = authState) {
+            is AuthViewModel.AuthState.Success -> {
+                if (state.isNewUser) {
+                    onFirstLogin()
+                } else {
+                    onLogin()
+                }
+            }
+            is AuthViewModel.AuthState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
+    }
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
@@ -67,7 +107,6 @@ fun LoginScreen2(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Background image
         Image(
             painter = painterResource(id = R.drawable.loginbackground),
             contentDescription = "Background",
@@ -75,21 +114,19 @@ fun LoginScreen2(
             contentScale = ContentScale.Crop
         )
 
-        // White box content - NẰM Ở GIỮA MÀN HÌNH với opacity 90%
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight() // ĐỔI VỀ WRAP CONTENT HEIGHT
+                .wrapContentHeight()
                 .align(Alignment.Center)
-                .padding(horizontal = 20.dp) // KHOẢNG CÁCH TRÁI PHẢI
+                .padding(horizontal = 20.dp)
         ) {
-            // White box với opacity 90%
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight() // ĐỔI VỀ WRAP CONTENT HEIGHT
+                    .wrapContentHeight()
                     .clip(RoundedCornerShape(CornerRadius))
-                    .background(Color.White.copy(alpha = 0.9f)) // OPACITY 90%
+                    .background(Color.White.copy(alpha = 0.9f))
                     .padding(16.dp)
             ) {
                 Column(
@@ -99,17 +136,14 @@ fun LoginScreen2(
                         .padding(horizontal = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Header với nút back và chữ Đăng ký
-                    HeaderSection2(onGoRegister = onGoRegister)
+                    HeaderSection2(onGoBack = onGoBack, onGoRegister = onGoRegister)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Logo và tiêu đề
                     LogoSection2()
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Form đăng nhập
                     LoginForm2(
                         email = email,
                         onEmailChange = { email = it },
@@ -118,14 +152,17 @@ fun LoginScreen2(
                         rememberMe = rememberMe,
                         onRememberMeChange = { rememberMe = it },
                         focusManager = focusManager,
-                        onLogin = onLogin,
-                        onForgotPw = onForgotPw
+                        viewModel = viewModel,
+                        onForgotPw = onForgotPw,
+                        onGoRegister = onGoRegister
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Đăng nhập với mạng xã hội
-                    SocialLoginSection2()
+                    SocialLoginSection2(
+                        onGoogleLogin = { googleLauncher.launch(viewModel.getGoogleSignInIntent()) },
+                        onGitHubLogin = { viewModel.signInWithGitHub(activity) }
+                    )
                 }
             }
         }
@@ -133,12 +170,12 @@ fun LoginScreen2(
 }
 
 @Composable
-fun HeaderSection2(onGoRegister: () -> Unit) {
+fun HeaderSection2(onGoBack: () -> Unit, onGoRegister: () -> Unit) {
+    val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Nút back với animation
         var isBackPressed by remember { mutableStateOf(false) }
         val backScale by animateFloatAsState(
             targetValue = if (isBackPressed) 0.9f else 1f,
@@ -162,10 +199,9 @@ fun HeaderSection2(onGoRegister: () -> Unit) {
 
                 ) {
                     isBackPressed = true
-                    onGoRegister()
-                    // Reset animation
-                    kotlinx.coroutines.GlobalScope.launch {
-                        kotlinx.coroutines.delay(100)
+                    onGoBack()
+                    scope.launch {
+                        delay(100)
                         isBackPressed = false
                     }
                 },
@@ -173,7 +209,7 @@ fun HeaderSection2(onGoRegister: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "Đăng ký",
+            text = "Quay lại",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = Color.Black
@@ -227,8 +263,6 @@ fun LogoSection2() {
             color = Color.Gray,
             lineHeight = 18.sp
         )
-
-
     }
 }
 
@@ -241,13 +275,14 @@ fun LoginForm2(
     rememberMe: Boolean,
     onRememberMeChange: (Boolean) -> Unit,
     focusManager: FocusManager,
-    onLogin: () -> Unit,
-    onForgotPw: () -> Unit
+    viewModel: AuthViewModel,
+    onForgotPw: () -> Unit,
+    onGoRegister: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Email
         Text(
             text = "Email",
             fontSize = 14.sp,
@@ -266,7 +301,6 @@ fun LoginForm2(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Mật khẩu
         Text(
             text = "Mật khẩu",
             fontSize = 14.sp,
@@ -284,7 +318,6 @@ fun LoginForm2(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Remember me và Quên mật khẩu
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -306,7 +339,6 @@ fun LoginForm2(
                 )
             }
 
-            // Quên mật khẩu với animation
             var isPressed by remember { mutableStateOf(false) }
             val scale by animateFloatAsState(
                 targetValue = if (isPressed) 0.95f else 1f,
@@ -335,7 +367,6 @@ fun LoginForm2(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Đăng nhập button với animation
         var isLoginPressed by remember { mutableStateOf(false) }
         val loginScale by animateFloatAsState(
             targetValue = if (isLoginPressed) 0.98f else 1f,
@@ -346,10 +377,9 @@ fun LoginForm2(
         Button(
             onClick = {
                 isLoginPressed = true
-                onLogin()
-                // Reset animation sau một chút
-                kotlinx.coroutines.GlobalScope.launch {
-                    kotlinx.coroutines.delay(100)
+                viewModel.signInWithEmail(email, password)
+                scope.launch {
+                    delay(100)
                     isLoginPressed = false
                 }
             },
@@ -373,11 +403,33 @@ fun LoginForm2(
                 color = Color.White
             )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Chưa có tài khoản? ",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+            Text(
+                text = "Đăng ký ngay",
+                fontSize = 14.sp,
+                color = NutriColor,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.clickable { onGoRegister() }
+            )
+        }
     }
 }
 
 @Composable
-fun SocialLoginSection2() {
+fun SocialLoginSection2(
+    onGoogleLogin: () -> Unit,
+    onGitHubLogin: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -386,14 +438,14 @@ fun SocialLoginSection2() {
             icon = R.drawable.google,
             text = "Đăng nhập với Google",
             buttonColor = GoogleButtonColor,
-            onClick = { /* Handle Google login */ }
+            onClick = onGoogleLogin
         )
 
         SocialLoginButton2(
-            icon = R.drawable.facebook,
-            text = "Đăng nhập với Facebook",
-            buttonColor = FacebookButtonColor,
-            onClick = { /* Handle Facebook login */ }
+            icon = R.drawable.github,
+            text = "Đăng nhập với GitHub",
+            buttonColor = GitHubButtonColor,
+            onClick = onGitHubLogin
         )
     }
 }
@@ -405,6 +457,7 @@ fun SocialLoginButton2(
     buttonColor: Color,
     onClick: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.98f else 1f,
@@ -416,9 +469,8 @@ fun SocialLoginButton2(
         onClick = {
             isPressed = true
             onClick()
-            // Reset animation sau một chút
-            kotlinx.coroutines.GlobalScope.launch {
-                kotlinx.coroutines.delay(100)
+            scope.launch {
+                delay(100)
                 isPressed = false
             }
         },
@@ -549,7 +601,6 @@ fun PasswordTextField2(
                     }
                     innerTextField()
                 }
-
                 Icon(
                     imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                     contentDescription = if (passwordVisible) "Ẩn mật khẩu" else "Hiện mật khẩu",
