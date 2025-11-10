@@ -1,6 +1,5 @@
 package com.example.nutrifit.ui.screens.createprofile
 
-import android.R.attr.onClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -183,7 +181,6 @@ fun CreateProfile() {
 
                     )
                     //tieu de
-
                     Text(
                         text = "Thông tin cá nhân",
                         style = MaterialTheme.typography.headlineSmall,
