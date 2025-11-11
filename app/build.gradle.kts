@@ -105,4 +105,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Thêm các dependencies mới cho API call
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("org.json:json:20231013")
+// ML Kit (nếu chưa có)
+    implementation("com.google.mlkit:image-labeling:17.0.7")
+    implementation("com.google.mlkit:image-labeling-custom:17.0.1")
 }
