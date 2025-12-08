@@ -11,10 +11,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
@@ -31,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nutrifit.R
-import com.example.nutrifit.viewmodel.AuthViewModel
+import com.example.nutrifit.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -59,15 +64,16 @@ private val GitHubButtonColor = Color(0xFF24292E)
 
 @Composable
 fun LoginScreen2(
-    onLogin: () -> Unit,
+    onLogin: (LoginViewModel.NextScreen) -> Unit,
     onFirstLogin: () -> Unit,
     onGoRegister: () -> Unit,
     onGoBack: () -> Unit,
-    onForgotPw: () -> Unit
+    onForgotPw: () -> Unit,
+    onEmailNotVerified: (String) -> Unit
 ) {
     val context = LocalContext.current
     val activity = context as android.app.Activity
-    val viewModel: AuthViewModel = viewModel()
+    val viewModel: LoginViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         viewModel.initGoogleSignIn(context)
@@ -85,15 +91,16 @@ fun LoginScreen2(
 
     LaunchedEffect(authState) {
         when (val state = authState) {
-            is AuthViewModel.AuthState.Success -> {
-                if (state.isNewUser) {
-                    onFirstLogin()
-                } else {
-                    onLogin()
-                }
+            is LoginViewModel.AuthState.Success -> {
+                onLogin(state.nextScreen)
             }
-            is AuthViewModel.AuthState.Error -> {
+            is LoginViewModel.AuthState.EmailNotVerified -> {
+                onEmailNotVerified(state.email)
+                viewModel.resetAuthState() // Reset state
+            }
+            is LoginViewModel.AuthState.Error -> {
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                viewModel.resetAuthState() // Reset state
             }
             else -> {}
         }
@@ -114,12 +121,14 @@ fun LoginScreen2(
             contentScale = ContentScale.Crop
         )
 
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .align(Alignment.Center)
-                .padding(horizontal = 20.dp)
+                .fillMaxSize()
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
                 modifier = Modifier
@@ -274,12 +283,13 @@ fun LoginForm2(
     onPasswordChange: (String) -> Unit,
     rememberMe: Boolean,
     onRememberMeChange: (Boolean) -> Unit,
-    focusManager: FocusManager,
-    viewModel: AuthViewModel,
+    focusManager: androidx.compose.ui.focus.FocusManager,
+    viewModel: LoginViewModel,
     onForgotPw: () -> Unit,
     onGoRegister: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -296,7 +306,15 @@ fun LoginForm2(
             onValueChange = onEmailChange,
             placeholder = "Nhập Email",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            focusManager = focusManager
+            focusManager = focusManager,
+            modifier = Modifier.onFocusEvent { focusState ->
+                if (focusState.isFocused) {
+                    scope.launch {
+                        delay(200)
+                        bringIntoViewRequester.bringIntoView()
+                    }
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -308,14 +326,20 @@ fun LoginForm2(
             color = Color.Black,
             modifier = Modifier.padding(bottom = 4.dp)
         )
-
         PasswordTextField2(
             value = password,
             onValueChange = onPasswordChange,
             placeholder = "••••••••••••••••••••",
-            focusManager = focusManager
+            focusManager = focusManager,
+            modifier = Modifier.onFocusEvent { focusState ->
+                if (focusState.isFocused) {
+                    scope.launch {
+                        delay(200) 
+                        bringIntoViewRequester.bringIntoView()
+                    }
+                }
+            }
         )
-
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(
@@ -386,7 +410,8 @@ fun LoginForm2(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
-                .scale(loginScale),
+                .scale(loginScale)
+                .bringIntoViewRequester(bringIntoViewRequester),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = NutriColor
@@ -514,7 +539,7 @@ fun CustomTextField2(
     placeholder: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    focusManager: FocusManager,
+    focusManager: androidx.compose.ui.focus.FocusManager,
     modifier: Modifier = Modifier
 ) {
     BasicTextField(
@@ -559,7 +584,7 @@ fun PasswordTextField2(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    focusManager: FocusManager,
+    focusManager: androidx.compose.ui.focus.FocusManager,
     modifier: Modifier = Modifier
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
