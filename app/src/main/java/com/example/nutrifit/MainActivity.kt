@@ -2,7 +2,6 @@ package com.example.nutrifit
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,12 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.nutrifit.ui.navigation.AppNavHost
-import com.example.nutrifit.ui.screens.home.HomeScreen
-import com.example.nutrifit.ui.theme.NUTRIFITTheme
-import com.example.nutrifit.ui.theme.NutriFitTheme
+import com.example.nutrifit.theme.NutriFitTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,14 +31,9 @@ class MainActivity : ComponentActivity() {
         windowInsetsController.isAppearanceLightStatusBars = false
         windowInsetsController.isAppearanceLightNavigationBars = false
 
-        setContent {
-            NutriFitTheme {
-                AppNavHost()
-            }
-        }
 
         setContent {
-            NUTRIFITTheme {
+            NutriFitTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
