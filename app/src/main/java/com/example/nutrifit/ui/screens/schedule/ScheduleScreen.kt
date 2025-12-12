@@ -211,7 +211,7 @@ fun ScheduleHeader(
         }
 
         Box(modifier = Modifier.height(52.dp).padding(vertical = 4.dp), contentAlignment = Alignment.Center) {
-             if (selectedDate != today) {
+            if (selectedDate != today) {
                 Button(
                     onClick = { onDateChanged(today) },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800), contentColor = Color.White),
@@ -221,7 +221,7 @@ fun ScheduleHeader(
                 }
             }
         }
-        
+
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             weeklySchedules.forEach { schedule ->
                 val isScheduleComplete = schedule.exercises.isNotEmpty() && schedule.exercises.all { it.isCompleted }

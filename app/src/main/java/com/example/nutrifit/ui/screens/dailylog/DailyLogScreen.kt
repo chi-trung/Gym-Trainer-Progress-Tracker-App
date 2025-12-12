@@ -190,7 +190,7 @@ fun <T> GroupedLazyColumn(
     keyExtractor: (T) -> Date,
     itemContent: @Composable (T) -> Unit
 ) {
-    val grouped = items.groupBy { 
+    val grouped = items.groupBy {
         val sdf = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.forLanguageTag("vi"))
         sdf.format(keyExtractor(it))
     }
