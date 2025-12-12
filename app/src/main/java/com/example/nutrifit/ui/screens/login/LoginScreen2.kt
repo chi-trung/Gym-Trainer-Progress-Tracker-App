@@ -334,7 +334,7 @@ fun LoginForm2(
             modifier = Modifier.onFocusEvent { focusState ->
                 if (focusState.isFocused) {
                     scope.launch {
-                        delay(200) 
+                        delay(200)
                         bringIntoViewRequester.bringIntoView()
                     }
                 }
